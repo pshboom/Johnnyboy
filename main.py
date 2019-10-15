@@ -3,7 +3,7 @@ import socket
 class Packet:
 
     def __init__(self):
-        pass
+        '''pass'''
 
     def packet_header(self, data, offset):
         self.ts_sec = struct.unpack('<L', data[offset: offset + 4])[0]
@@ -26,11 +26,11 @@ class Ethernet:
 
     def analysis(self, data, packet_ends_offset):
         offset = 0
-        self.dstination_mac = data[offset: offset + 6].encode("hex")
+        self.dstination_mac = data[offset: offset + 6]#.encode("hex")
         offset += 6
-        self.source_mac = data[offset: offset + 6].encode("hex")
+        self.source_mac = data[offset: offset + 6]#.encode("hex")
         offset += 6
-        self.ethernet_type = data[offset:offset + 2].encode("hex")
+        self.ethernet_type = data[offset:offset + 2]#.encode("hex")
         offset += 2
         self.IP = None
         print (self.source_mac, self.dstination_mac, self.ethernet_type)
@@ -111,7 +111,7 @@ class UDP:
 
 class PcapHeader:
     def __init__(self):
-        pass
+        '''pass'''
 
     def analysis(self, data, offset):
         self.magic_number = data[offset: offset + 4]
@@ -131,13 +131,13 @@ class PcapHeader:
         return offset
 
 
-packets = []
-fd = open("test.pcap", "rb")
-data = fd.read()
-fd.close()
-pcapHeader = PcapHeader()
-offset = 0
-offset = pcapHeader.analysis(data, offset)
+packets = [] # 패킷 선언
+fd = open("test.pcap", "rb") # 파일을 불러옴
+data = fd.read() # data에 파일 내용을을 집어넣어 메모리에 올림
+fd.close() # 파일사용을 종료함
+pcapHeader = PcapHeader() # pcapheader 클래스 선언
+offset = 0 # offset 초기화
+offset = pcapHeader.analysis(data, offset) #pcapheader의 analysis 메소드 호출
 index = 1
 
 while True:
