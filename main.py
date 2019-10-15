@@ -26,11 +26,11 @@ class Ethernet:
 
     def analysis(self, data, packet_ends_offset):
         offset = 0
-        self.dstination_mac = data[offset: offset + 6].hex()#.encode("hex")
+        self.dstination_mac = data[offset: offset + 6].encode("hex")
         offset += 6
-        self.source_mac = data[offset: offset + 6].hex()#.encode("hex")
+        self.source_mac = data[offset: offset + 6].encode("hex")
         offset += 6
-        self.ethernet_type = data[offset:offset + 2].hex()#.encode("hex")
+        self.ethernet_type = data[offset:offset + 2].encode("hex")
         offset += 2
         self.IP = None
         print (self.source_mac, self.dstination_mac, self.ethernet_type)
