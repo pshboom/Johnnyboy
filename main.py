@@ -85,8 +85,10 @@ class TCP:
         offset += 2
         self.urgent_pointer = data[offset: offset + 2]
         offset += 2
-        self.payload = data[offset: packet_ends_offset].split('\r\n')
-        print 'TCP', self.source_port, self.destination_port, self.flags, self.payload
+        self.payload = data[offset: packet_ends_offset]
+        print 'TCP', self.source_port, self.destination_port, self.flags
+        if self.source_port == 80 and self.flags.find("P")>-1:
+            print self.payload.split("\r\n")
         #raw_input()
 
     def getFlags(self, data):
@@ -120,7 +122,7 @@ class UDP:
         self.checksum = struct.unpack("<H", data[offset: offset + 2])[0]
         offset += 2
         self.payload = data[offset: packet_ends_offset].split('\r\n')
-        print 'UDP', self.source_port, self.destination_port, self.header_length, self.payload
+        print 'UDP', self.source_port, self.destination_port, self.header_length, len(self.payload)
         #raw_input()
 
 
@@ -148,7 +150,7 @@ class PcapHeader:
 
 
 packets = [] # 패킷 선언
-fd = open("test.pcap", "rb") # 파일을 불러옴
+fd = open("duamc.apk.pcap", "rb") # 파일을 불러옴
 data = fd.read() # data에 파일 내용을을 집어넣어 메모리에 올림
 fd.close() # 파일사용을 종료함
 pcapHeader = PcapHeader() # pcapheader 클래스 선언
