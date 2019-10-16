@@ -85,9 +85,9 @@ class TCP:
         offset += 2
         self.urgent_pointer = data[offset: offset + 2]
         offset += 2
-        self.payload = data[offset: packet_ends_offset]
-        print 'TCP', self.source_port, self.destination_port, self.flags, len(self.payload)
-        raw_input()
+        self.payload = data[offset: packet_ends_offset].split('\r\n')
+        print 'TCP', self.source_port, self.destination_port, self.flags, self.payload
+        #raw_input()
 
     def getFlags(self, data):
         flags = ''
@@ -117,16 +117,11 @@ class UDP:
         offset += 2
         self.header_length = struct.unpack("<H", data[offset: offset + 2])[0]
         offset += 2
-        #self.flags = self.getFlags(data=data[offset: offset + 2])
-        #self.window_size = struct.unpack("<H", data[offset: offset + 2])[0]
-        #offset += 2
         self.checksum = struct.unpack("<H", data[offset: offset + 2])[0]
         offset += 2
-        #self.urgent_pointer = data[offset: offset + 2]
-        #offset += 2
-        #self.payload = data[offset: packet_ends_offset]
-        print 'UDP', self.source_port, self.destination_port, self.header_length
-        raw_input()
+        self.payload = data[offset: packet_ends_offset].split('\r\n')
+        print 'UDP', self.source_port, self.destination_port, self.header_length, self.payload
+        #raw_input()
 
 
 
