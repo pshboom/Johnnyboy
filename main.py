@@ -56,10 +56,13 @@ class IP:
         offset += 4
         self.destination_ip = socket.inet_ntoa(data[offset:offset + 4])
         offset += 4
-        print self.source_ip, self.destination_ip, self.ttl
+        print self.source_ip, self.destination_ip, self.ttl, self.protocol
         if self.protocol == 6:
             self.TCP = TCP()
             self.TCP.analysis(data, offset, packet_ends_offset)
+        elif self.protocol == 17:
+            self.UDP = UDP()
+            self.UDP.analysis(data, offset, packet_ends_offset)
 
 
 class TCP:
@@ -83,7 +86,7 @@ class TCP:
         self.urgent_pointer = data[offset: offset + 2]
         offset += 2
         self.payload = data[offset: packet_ends_offset]
-        print self.source_port, self.destination_port, self.flags, len(self.payload)
+        print 'TCP', self.source_port, self.destination_port, self.flags, len(self.payload)
         raw_input()
 
     def getFlags(self, data):
@@ -107,8 +110,24 @@ class TCP:
 
 class UDP:
 
-    def __init__(self, data):
-        pass
+    def analysis(self, data, offset, packet_ends_offset):
+        self.source_port = struct.unpack(">H", data[offset: offset + 2])[0]
+        offset += 2
+        self.destination_port = struct.unpack(">H", data[offset: offset + 2])[0]
+        offset += 2
+        self.header_length = struct.unpack("<H", data[offset: offset + 2])[0]
+        offset += 2
+        #self.flags = self.getFlags(data=data[offset: offset + 2])
+        #self.window_size = struct.unpack("<H", data[offset: offset + 2])[0]
+        #offset += 2
+        self.checksum = struct.unpack("<H", data[offset: offset + 2])[0]
+        offset += 2
+        #self.urgent_pointer = data[offset: offset + 2]
+        #offset += 2
+        #self.payload = data[offset: packet_ends_offset]
+        print 'UDP', self.source_port, self.destination_port, self.header_length
+        raw_input()
+
 
 
 class PcapHeader:
