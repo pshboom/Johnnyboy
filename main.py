@@ -1,9 +1,12 @@
+
+#-*- coding: utf-8 -*-
+#2번줄을 입력해야만 코드 내에 한글이 있어도 사용이 가능하다.
 import struct
 import socket
 class Packet:
 
     def __init__(self):
-        '''pass'''
+        pass
 
     def packet_header(self, data, offset):
         self.ts_sec = struct.unpack('<L', data[offset: offset + 4])[0]
@@ -26,14 +29,14 @@ class Ethernet:
 
     def analysis(self, data, packet_ends_offset):
         offset = 0
-        self.dstination_mac = data[offset: offset + 6]#.encode("hex")
+        self.dstination_mac = data[offset: offset + 6].encode("hex")
         offset += 6
-        self.source_mac = data[offset: offset + 6]#.encode("hex")
+        self.source_mac = data[offset: offset + 6].encode("hex")
         offset += 6
-        self.ethernet_type = data[offset:offset + 2]#.encode("hex")
+        self.ethernet_type = data[offset:offset + 2].encode("hex")
         offset += 2
         self.IP = None
-        print (self.source_mac, self.dstination_mac, self.ethernet_type)
+        print self.source_mac, self.dstination_mac, self.ethernet_type
         if self.ethernet_type == "0800":
             self.IP = IP()
             self.IP.analysis(data, offset, packet_ends_offset)
@@ -53,7 +56,7 @@ class IP:
         offset += 4
         self.destination_ip = socket.inet_ntoa(data[offset:offset + 4])
         offset += 4
-        print(self.source_ip, self.destination_ip, self.ttl)
+        print self.source_ip, self.destination_ip, self.ttl
         if self.protocol == 6:
             self.TCP = TCP()
             self.TCP.analysis(data, offset, packet_ends_offset)
@@ -80,9 +83,8 @@ class TCP:
         self.urgent_pointer = data[offset: offset + 2]
         offset += 2
         self.payload = data[offset: packet_ends_offset]
-        print
-        self.source_port, self.destination_port, self.flags, len(self.payload)
-        #raw_input()
+        print self.source_port, self.destination_port, self.flags, len(self.payload)
+        raw_input()
 
     def getFlags(self, data):
         flags = ''
@@ -111,7 +113,7 @@ class UDP:
 
 class PcapHeader:
     def __init__(self):
-        '''pass'''
+        pass
 
     def analysis(self, data, offset):
         self.magic_number = data[offset: offset + 4]
