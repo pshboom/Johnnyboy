@@ -150,14 +150,15 @@ class PcapHeader:
 
 
 packets = [] # 패킷 선언
-fd = open("duamc.apk.pcap", "rb") # 파일을 불러옴
+fd = open("test"
+          ".pcap", "rb") # 파일을 불러옴
 data = fd.read() # data에 파일 내용을을 집어넣어 메모리에 올림
 fd.close() # 파일사용을 종료함
 pcapHeader = PcapHeader() # pcapheader 클래스 선언
 offset = 0 # offset 초기화
 offset = pcapHeader.analysis(data, offset) #pcapheader의 analysis 메소드 호출
 index = 1
-
+#f = open("result.txt", 'w')
 while True:
     if offset >= len(data):
         break
@@ -168,3 +169,6 @@ while True:
     offset = offset + packet.incl_len
     packets.append(packet)
     index += 1
+    #f.write('\n'.join(packet.tostring()))
+
+#f.close()
