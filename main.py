@@ -36,7 +36,9 @@ class Ethernet:
         self.ethernet_type = data[offset:offset + 2].encode("hex")
         offset += 2
         self.IP = None
-        print self.source_mac, self.dstination_mac, self.ethernet_type
+        Ethernet_result = ('Source Mac : '+self.source_mac+', Destination Mac : '+self.dstination_mac+', Ethernet Type : '+self.ethernet_type+'\n')
+        print Ethernet_result
+        f.write(Ethernet_result)
         if self.ethernet_type == "0800":
             self.IP = IP()
             self.IP.analysis(data, offset, packet_ends_offset)
@@ -56,7 +58,9 @@ class IP:
         offset += 4
         self.destination_ip = socket.inet_ntoa(data[offset:offset + 4])
         offset += 4
-        print self.source_ip, self.destination_ip, self.ttl, self.protocol
+        IP_result = ('Source IP : '+self.source_ip+', Destination IP : '+self.destination_ip+', Protocol : '+str(self.protocol)+'\n')
+        print IP_result
+        f.write(IP_result)
         if self.protocol == 6:
             self.TCP = TCP()
             self.TCP.analysis(data, offset, packet_ends_offset)
@@ -86,9 +90,13 @@ class TCP:
         self.urgent_pointer = data[offset: offset + 2]
         offset += 2
         self.payload = data[offset: packet_ends_offset]
-        print 'TCP', self.source_port, self.destination_port, self.flags
+        TCP_results = ('TCP, Source Port : '+str(self.source_port)+', Destination Port : '+str(self.destination_port)+', Flags : '+self.flags+'\n')
+        print TCP_results
+        f.write(TCP_results)
         if self.source_port == 80 and self.flags.find("P")>-1:
-            print self.payload.split("\r\n")
+            TCP_payload = self.payload.split("\r\n")
+            print TCP_payload
+            f.write('\n'.join(TCP_payload))
         #raw_input()
 
     def getFlags(self, data):
@@ -122,7 +130,9 @@ class UDP:
         self.checksum = struct.unpack("<H", data[offset: offset + 2])[0]
         offset += 2
         self.payload = data[offset: packet_ends_offset].split('\r\n')
-        print 'UDP', self.source_port, self.destination_port, self.header_length, len(self.payload)
+        UDP_results = ('UDP, Source Port : '+str(self.source_port)+', Destination Port : '+str(self.destination_port)+', Header Length : '+str(self.header_length)+'\n')
+        print UDP_results
+        f.write(UDP_results)
         #raw_input()
 
 
@@ -150,25 +160,26 @@ class PcapHeader:
 
 
 packets = [] # 패킷 선언
-fd = open("test"
-          ".pcap", "rb") # 파일을 불러옴
+fd = open("test3.pcap", "rb") # 파일을 불러옴
 data = fd.read() # data에 파일 내용을을 집어넣어 메모리에 올림
 fd.close() # 파일사용을 종료함
 pcapHeader = PcapHeader() # pcapheader 클래스 선언
 offset = 0 # offset 초기화
 offset = pcapHeader.analysis(data, offset) #pcapheader의 analysis 메소드 호출
 index = 1
-#f = open("result.txt", 'w')
+f = open("result.txt", 'w')
 while True:
     if offset >= len(data):
         break
     print(index)
+    f.write(str(index))
+    f.write('\n')
     packet = Packet()
     offset = packet.packet_header(data, offset)
     packet.analysis(data[offset: offset + packet.incl_len], offset + packet.incl_len)
     offset = offset + packet.incl_len
     packets.append(packet)
     index += 1
-    #f.write('\n'.join(packet.tostring()))
 
-#f.close()
+
+f.close()
